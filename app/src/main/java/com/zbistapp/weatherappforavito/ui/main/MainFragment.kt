@@ -12,14 +12,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import com.zbistapp.weatherappforavito.App
 import com.zbistapp.weatherappforavito.R
 import com.zbistapp.weatherappforavito.databinding.FragmentMainBinding
 import com.zbistapp.weatherappforavito.location.ILocationRepo
-import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class MainFragment : Fragment(R.layout.fragment_main) {

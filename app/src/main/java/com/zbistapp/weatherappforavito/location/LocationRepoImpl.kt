@@ -2,16 +2,15 @@ package com.zbistapp.weatherappforavito.location
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import javax.inject.Inject
 
-class LocationRepoImpl(private val context: Context) : ILocationRepo {
+class LocationRepoImpl(context: Context) : ILocationRepo {
 
     private val locationManager: LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private lateinit var locationListener: LocationListener
     private var isLocationListenerStarted = false
 
     companion object {
@@ -23,8 +22,7 @@ class LocationRepoImpl(private val context: Context) : ILocationRepo {
     override suspend fun currentLocation(callback: (Location) -> Unit) {
         if (!isLocationListenerStarted) {
             isLocationListenerStarted = !isLocationListenerStarted
-            val bestProvider = locationManager.getBestProvider(Criteria(), true)
-            val locationListener = LocationListener {
+            locationListener = LocationListener {
                 callback.invoke(it)
             }
 
@@ -42,5 +40,9 @@ class LocationRepoImpl(private val context: Context) : ILocationRepo {
                 locationListener
             )
         }
+    }
+
+    override fun removeUpdates() {
+        locationManager.removeUpdates(locationListener)
     }
 }
