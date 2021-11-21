@@ -10,14 +10,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.snackbar.Snackbar
 import com.zbistapp.weatherappforavito.App
 import com.zbistapp.weatherappforavito.R
 import com.zbistapp.weatherappforavito.databinding.FragmentMainBinding
-import com.zbistapp.weatherappforavito.domain.ILocationRepo
+import com.zbistapp.weatherappforavito.domain.entityes.CurrentWeatherEntity
+import com.zbistapp.weatherappforavito.utils.Converter
 import javax.inject.Inject
 
 class MainFragment : Fragment(R.layout.fragment_main) {
@@ -25,8 +24,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     @Inject
     lateinit var factory: MainViewModelFactory
 
-    private val viewModel: MainViewModel by viewModels{ factory }
+    private val viewModel: MainViewModel by viewModels { factory }
     private val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
+
+    private val converter = Converter()
 
     companion object {
         fun newInstance() = MainFragment()
@@ -49,9 +50,48 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.lastLocation.observe(viewLifecycleOwner) {
+        viewModel.lastLocationLiveData.observe(viewLifecycleOwner) {
             Toast.makeText(context, "${it.latitude} ${it.longitude}", Toast.LENGTH_SHORT).show()
             viewModel.getCurrentWeather(it)
+        }
+
+        viewModel.currentWeatherLiveData.observe(viewLifecycleOwner) {
+            initMainCurrentWeather(it)
+        }
+
+        viewModel.errorLiveData.observe(viewLifecycleOwner) {
+            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.progressBarLiveData.observe(viewLifecycleOwner) {
+            if (it) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun initMainCurrentWeather(currentWeather: CurrentWeatherEntity) {
+        with(binding) {
+            val temp = "${converter.kelvinToCelsius(currentWeather.main.temp)}°"
+            temperatureTextView.text = temp
+            val highTemp = "${converter.kelvinToCelsius(currentWeather.main.tempMax)}°/"
+            highTemperatureTextView.text = highTemp
+            val lowTemp = "${converter.kelvinToCelsius(currentWeather.main.tempMin)}°"
+            lowTemperatureTextView.text = lowTemp
+            weatherDescriptionTextView.text = currentWeather.weather[0].description
+            val feelsLike =
+                "${getString(R.string.feels_like_text)} ${
+                    converter.kelvinToCelsius(
+                        currentWeather.main.feelsLike
+                    )
+                }°"
+            feelsLikeTextView.text = feelsLike
+            locationTextView.text = currentWeather.name
+            val lastUpdate =
+                "${getString(R.string.last_update_text)} ${converter.timeToHours(currentWeather.date)}"
+            lastUpdateTextView.text = lastUpdate
         }
     }
 
@@ -117,13 +157,4 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 ).show()
             }
         }
-}
-
-class MainViewModelFactory(
-    private val locationRepository: ILocationRepo,
-) :
-    ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T =
-        MainViewModel(locationRepository) as T
 }

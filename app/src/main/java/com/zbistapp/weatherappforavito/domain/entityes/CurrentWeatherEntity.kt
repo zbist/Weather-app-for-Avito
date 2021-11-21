@@ -6,4 +6,5 @@ data class CurrentWeatherEntity(
     @SerializedName("weather") val weather: List<WeatherEntity>,
     @SerializedName("main") val main: MainEntity,
     @SerializedName("name") val name: String,
+    @SerializedName("dt") val date: Long,
 )

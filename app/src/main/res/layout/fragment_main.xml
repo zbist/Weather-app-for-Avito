@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/progress_bar_margin"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/temperature_text_view"
         android:layout_width="wrap_content"
@@ -62,7 +72,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/weather_description_text_view"
-        tools:text="@string/feels_like_text_tools" />
+        tools:text="@string/feels_like_text" />
 
     <TextView
         android:id="@+id/location_text_view"
@@ -85,7 +95,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/location_text_view"
-        tools:text="@string/last_update_text_tools" />
+        tools:text="@string/last_update_text" />
 
     <View
         android:id="@+id/first_line_view"

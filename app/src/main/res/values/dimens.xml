@@ -15,4 +15,5 @@
     <dimen name="last_update_text_size">16sp</dimen>
     <dimen name="first_line_view_margin">16dp</dimen>
     <dimen name="feels_like_text_size">20sp</dimen>
+    <dimen name="progress_bar_margin">15dp</dimen>
 </resources>

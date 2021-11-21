@@ -5,6 +5,17 @@ plugins {
 }
 
 android {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file("apikey.properties").newDataInputStream())
+    signingConfigs {
+        key {
+            storeFile file('./../keyStore.jks')
+            storePassword properties.getProperty("key_store_pass")
+            keyAlias 'key0'
+            keyPassword properties.getProperty("key_store_pass")
+        }
+    }
+
     compileSdk 31
 
     defaultConfig {
@@ -15,6 +26,8 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "String", "BASE_URL", "\"https://api.openweathermap.org/data/2.5/\""
     }
 
     buildTypes {
@@ -32,6 +45,10 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+    buildTypes.each {
+        def apiKey = properties.getProperty("weather_api_key", "")
+        it.buildConfigField "String", "WEATHER_API_KEY", apiKey
     }
 }
 
