@@ -2,11 +2,10 @@ package com.zbistapp.weatherappforavito.di
 
 import android.app.Application
 import android.content.Context
-import com.zbistapp.weatherappforavito.location.ILocationRepo
-import com.zbistapp.weatherappforavito.location.LocationRepoImpl
+import com.zbistapp.weatherappforavito.domain.ILocationRepo
+import com.zbistapp.weatherappforavito.data.LocationRepoImpl
 import com.zbistapp.weatherappforavito.ui.main.MainFragment
 import com.zbistapp.weatherappforavito.ui.main.MainViewModelFactory
-import dagger.Binds
 import dagger.Component
 import dagger.Module
 import dagger.Provides

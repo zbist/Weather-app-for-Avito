@@ -1,4 +1,4 @@
-package com.zbistapp.weatherappforavito.location
+package com.zbistapp.weatherappforavito.domain
 
 import android.location.Location
 

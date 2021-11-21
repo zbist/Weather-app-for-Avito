@@ -1,10 +1,11 @@
-package com.zbistapp.weatherappforavito.location
+package com.zbistapp.weatherappforavito.data
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import com.zbistapp.weatherappforavito.domain.ILocationRepo
 
 class LocationRepoImpl(context: Context) : ILocationRepo {
 
@@ -29,7 +30,7 @@ class LocationRepoImpl(context: Context) : ILocationRepo {
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 REFRESH_RATE,
-                500f,
+                TRASH_HOLD,
                 locationListener
             )
 
@@ -43,6 +44,7 @@ class LocationRepoImpl(context: Context) : ILocationRepo {
     }
 
     override fun removeUpdates() {
+        isLocationListenerStarted = !isLocationListenerStarted
         locationManager.removeUpdates(locationListener)
     }
 }

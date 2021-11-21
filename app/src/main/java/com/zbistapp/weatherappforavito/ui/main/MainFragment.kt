@@ -17,7 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.zbistapp.weatherappforavito.App
 import com.zbistapp.weatherappforavito.R
 import com.zbistapp.weatherappforavito.databinding.FragmentMainBinding
-import com.zbistapp.weatherappforavito.location.ILocationRepo
+import com.zbistapp.weatherappforavito.domain.ILocationRepo
 import javax.inject.Inject
 
 class MainFragment : Fragment(R.layout.fragment_main) {
@@ -50,7 +50,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.lastLocation.observe(viewLifecycleOwner) {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "${it.latitude} ${it.longitude}", Toast.LENGTH_SHORT).show()
+            viewModel.getCurrentWeather(it)
         }
     }
 

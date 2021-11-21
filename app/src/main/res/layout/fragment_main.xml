@@ -54,16 +54,26 @@
         tools:text="@string/weather_description_text_tools" />
 
     <TextView
+        android:id="@+id/feels_like_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/feels_like_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/weather_description_text_view"
+        tools:text="@string/feels_like_text_tools" />
+
+    <TextView
         android:id="@+id/location_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/location_text_view_margin"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textColor="@color/black"
         android:textSize="@dimen/location_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/weather_description_text_view"
+        app:layout_constraintTop_toBottomOf="@id/feels_like_text_view"
         tools:text="@string/location_text_tools" />
 
     <TextView
