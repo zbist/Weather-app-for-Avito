@@ -1,6 +1,7 @@
 package com.zbistapp.weatherappforavito.ui.main
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -11,11 +12,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.zbistapp.weatherappforavito.App
+import com.zbistapp.weatherappforavito.BuildConfig
 import com.zbistapp.weatherappforavito.R
 import com.zbistapp.weatherappforavito.databinding.FragmentMainBinding
-import com.zbistapp.weatherappforavito.domain.entityes.CurrentWeatherEntity
+import com.zbistapp.weatherappforavito.domain.responses.current.CurrentWeatherResponse
+import com.zbistapp.weatherappforavito.domain.responses.details.DetailedWeatherResponse
 import com.zbistapp.weatherappforavito.utils.Converter
 import javax.inject.Inject
 
@@ -28,6 +32,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private val binding: FragmentMainBinding by viewBinding(FragmentMainBinding::bind)
 
     private val converter = Converter()
+    private lateinit var hourlyAdapter: HourlyWeatherAdapter
+    private lateinit var dailyAdapter: DailyWeatherAdapter
 
     companion object {
         fun newInstance() = MainFragment()
@@ -50,13 +56,20 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initRecyclerViews()
+
         viewModel.lastLocationLiveData.observe(viewLifecycleOwner) {
             Toast.makeText(context, "${it.latitude} ${it.longitude}", Toast.LENGTH_SHORT).show()
             viewModel.getCurrentWeather(it)
+            viewModel.getDetailedWeather(it)
         }
 
         viewModel.currentWeatherLiveData.observe(viewLifecycleOwner) {
             initMainCurrentWeather(it)
+        }
+
+        viewModel.detailedWeatherLiveData.observe(viewLifecycleOwner) {
+            initDetailedWeather(it)
         }
 
         viewModel.errorLiveData.observe(viewLifecycleOwner) {
@@ -72,7 +85,22 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-    private fun initMainCurrentWeather(currentWeather: CurrentWeatherEntity) {
+    private fun initRecyclerViews() {
+        hourlyAdapter = HourlyWeatherAdapter()
+        binding.hourlyWeatherRecyclerView.adapter = hourlyAdapter
+        dailyAdapter = DailyWeatherAdapter()
+        binding.dailyWeatherRecyclerView.adapter = dailyAdapter
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initDetailedWeather(detailedWeather: DetailedWeatherResponse) {
+        hourlyAdapter.listOfHourlyWeather = detailedWeather.hourlyWeather
+        hourlyAdapter.notifyDataSetChanged()
+        dailyAdapter.listOfDailyWeather = detailedWeather.dailyWeather
+        dailyAdapter.notifyDataSetChanged()
+    }
+
+    private fun initMainCurrentWeather(currentWeather: CurrentWeatherResponse) {
         with(binding) {
             val temp = "${converter.kelvinToCelsius(currentWeather.main.temp)}°"
             temperatureTextView.text = temp
@@ -92,6 +120,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
             val lastUpdate =
                 "${getString(R.string.last_update_text)} ${converter.timeToHours(currentWeather.date)}"
             lastUpdateTextView.text = lastUpdate
+            Glide.with(mainPictureImageView)
+                .load(
+                    "${BuildConfig.IMG_URL}${currentWeather.weather[0].icon}.png"
+                ).into(mainPictureImageView)
         }
     }
 
