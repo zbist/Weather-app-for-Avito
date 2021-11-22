@@ -12,4 +12,5 @@
     <string name="why_i_need_permission_message">I can\'t find you with out this permission</string>
     <string name="grant">Grant</string>
     <string name="feels_like_text">feels like</string>
+    <string name="search_hint">search city</string>
 </resources>

@@ -16,7 +16,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
 
         toolbar = findViewById(R.id.toolbar)
-        toolbar.title = ""
         setSupportActionBar(toolbar)
 
         if (savedInstanceState == null) {

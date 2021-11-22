@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.EditorInfo.IME_ACTION_GO
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -53,13 +55,42 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (savedInstanceState == null) {
+            viewModel.getLocation()
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initRecyclerViews()
 
-        viewModel.lastLocationLiveData.observe(viewLifecycleOwner) {
-            Toast.makeText(context, "${it.latitude} ${it.longitude}", Toast.LENGTH_SHORT).show()
+        with(binding) {
+            searchLayout.setEndIconOnClickListener {
+                viewModel.getLocationFromAddressName(inputEditText.text.toString())
+                inputEditText.setText("")
+                searchLayout.clearFocus()
+            }
+
+            inputEditText.setOnKeyListener { _, keyCode, _ ->
+                when (keyCode) {
+                    KeyEvent.KEYCODE_ENTER -> {
+                        viewModel.getLocationFromAddressName(inputEditText.text.toString())
+                        inputEditText.setText("")
+                        searchLayout.clearFocus()
+                        return@setOnKeyListener true
+                    }
+                    else -> {
+                        return@setOnKeyListener false
+                    }
+                }
+            }
+        }
+
+        viewModel.locationLiveData.observe(viewLifecycleOwner) {
             viewModel.getCurrentWeather(it)
             viewModel.getDetailedWeather(it)
         }
@@ -83,6 +114,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 binding.progressBar.visibility = View.GONE
             }
         }
+
     }
 
     private fun initRecyclerViews() {
@@ -134,12 +166,6 @@ class MainFragment : Fragment(R.layout.fragment_main) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
-            R.id.search -> {
-                //todo
-                return true
-            }
-
             R.id.my_location -> {
                 checkLocationPermission()
                 return true

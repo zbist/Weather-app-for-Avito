@@ -13,8 +13,8 @@ class MainViewModel(
     private val networkRepo: INetworkRepo
 ) : ViewModel() {
 
-    private val _lastLocationLiveData = MutableLiveData<Location>()
-    val lastLocationLiveData: LiveData<Location> = _lastLocationLiveData
+    private val _locationLiveData = MutableLiveData<Location>()
+    val locationLiveData: LiveData<Location> = _locationLiveData
     private val _currentWeatherLiveData = MutableLiveData<CurrentWeatherResponse>()
     val currentWeatherLiveData: LiveData<CurrentWeatherResponse> = _currentWeatherLiveData
     private val _errorLiveData = MutableLiveData<Throwable>()
@@ -27,8 +27,8 @@ class MainViewModel(
     fun getLocation() {
         _progressBarLiveData.value = true
         viewModelScope.launch {
-            locationRepo.currentLocation() {
-                _lastLocationLiveData.value = it
+            locationRepo.currentLocation {
+                _locationLiveData.value = it
                 locationRepo.removeUpdates()
             }
         }
@@ -54,6 +54,23 @@ class MainViewModel(
                     _detailedWeatherLiveData.value = it.getOrNull()
                 } else {
                     _errorLiveData.value = it.exceptionOrNull()
+                }
+            }
+        }
+    }
+
+    fun getLocationFromAddressName(name: String) {
+        if (name.isNotBlank()) {
+            _progressBarLiveData.value = true
+            viewModelScope.launch {
+                val address = locationRepo.getLocationFromAddressName(name)
+                if (address != null) {
+                    val location = Location("")
+                    location.latitude = address.latitude
+                    location.longitude = address.longitude
+                    _locationLiveData.value = location
+                } else {
+                    _errorLiveData.value = Throwable("can't find this address")
                 }
             }
         }

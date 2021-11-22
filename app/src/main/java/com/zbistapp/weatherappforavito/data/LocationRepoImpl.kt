@@ -2,15 +2,16 @@ package com.zbistapp.weatherappforavito.data
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.location.*
 import com.zbistapp.weatherappforavito.domain.ILocationRepo
+import kotlin.concurrent.thread
+import kotlin.coroutines.suspendCoroutine
 
 class LocationRepoImpl(context: Context) : ILocationRepo {
 
     private val locationManager: LocationManager =
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private val geocoder = Geocoder(context)
     private lateinit var locationListener: LocationListener
     private var isLocationListenerStarted = false
 
@@ -42,6 +43,19 @@ class LocationRepoImpl(context: Context) : ILocationRepo {
             )
         }
     }
+
+    override suspend fun getLocationFromAddressName(name: String): Address? =
+        suspendCoroutine {
+            thread {
+                val result = geocoder.getFromLocationName(name, 1)
+
+                if (result != null) {
+                    it.resumeWith(Result.success(result.firstOrNull()))
+                } else {
+                    it.resumeWith(Result.failure(Throwable("can't find this address")))
+                }
+            }
+        }
 
     override fun removeUpdates() {
         isLocationListenerStarted = !isLocationListenerStarted
