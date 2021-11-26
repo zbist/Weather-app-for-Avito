@@ -16,20 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!--    <EditText-->
-    <!--        android:id="@+id/search_edit_text"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_margin="@dimen/search_line_margin"-->
-    <!--        android:drawableEnd="@drawable/ic_search"-->
-    <!--        android:drawablePadding="@dimen/search_line_padding"-->
-    <!--        android:hint="@string/search_hint"-->
-    <!--        android:importantForAutofill="no"-->
-    <!--        android:inputType="text"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent" />-->
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/search_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
